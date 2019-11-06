@@ -1,7 +1,7 @@
 # INFO2-PremiersPasPDO
 
-### NOM : DOE
-### Prénom : John
+### NOM : Margalejo
+### Prénom : Tom
 ### Groupe de TP : 
-- [X] TD1
-- [ ] TD2
+- [ ] TD1
+- [X] TD2

@@ -60,10 +60,10 @@
 			<td>Status</td>
 		</thead>
 		<?php
-			$stmt = $pdo->query("SELECT * FROM users JOIN status ON users.status_id = status.id WHERE username LIKE '$lettreUsername%' AND status.id = $statusID ORDER BY username");
+			$stmt = $pdo->prepare("SELECT users.id, username, email, name FROM users JOIN status ON users.status_id = status.id WHERE username LIKE ? AND status.id = ? ORDER BY username");
+			$stmt->execute([$lettreUsername . '%', $statusID]);
 			while ($row = $stmt->fetch())
 			{
-			    //echo $row['email'] . "\n";
 			    echo '<tr>';
 			    	echo '<td>' . $row['id'] . '</td>';
 			    	echo '<td>' . $row['username'] . '</td>';

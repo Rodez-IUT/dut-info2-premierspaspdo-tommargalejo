@@ -17,6 +17,18 @@
 	     throw new PDOException($e->getMessage(), (int)$e->getCode());
 	}
 
+	// traitement du formulaire
+	$statusID = 2;
+	$lettreUsername = '';
+
+	if (isset($_POST['lettre']) && isset($_POST['status'])) {
+		$lettreUsername = htmlspecialchars($_POST['lettre']);
+		if ($_POST['status'] == "active") {
+			$statusID = 2;
+		} else {
+			$statusID = 1;
+		}
+	}
  ?>
 
 <!DOCTYPE html>
@@ -26,6 +38,20 @@
 </head>
 <body>
 	<h1>Tous les utilisateurs</h1>
+	<form action="all_users.php" method="post">
+		<label for="letter">Start with letter: </label>
+		<input type="text" name="lettre" value="<?php echo $lettreUsername; ?>">
+		<label for="status"> and status : </label>
+		<select name="status">
+			<option value="active"
+				<?php if (isset($_POST['status']) && $_POST['status'] == "active"){echo 'selected';}?>
+				>Active account</option>
+			<option value="waiting"
+					<?php if (isset($_POST['status']) && $_POST['status'] == "waiting"){echo 'selected';}?>
+			>Waiting for account validation</option>
+		</select>
+		<input type="submit" name="valider" value="ok">
+	</form><br>
 	<table>
 		<thead>
 			<td>Id</td>
@@ -34,8 +60,6 @@
 			<td>Status</td>
 		</thead>
 		<?php
-			$statusID = 2;
-			$lettreUsername = 'e';
 			$stmt = $pdo->query("SELECT * FROM users JOIN status ON users.status_id = status.id WHERE username LIKE '$lettreUsername%' AND status.id = $statusID ORDER BY username");
 			while ($row = $stmt->fetch())
 			{

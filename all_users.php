@@ -1,4 +1,4 @@
-<?php 
+<?php
 	// Connexion à la BDD
 	$host = 'localhost';
 	$db   = 'my_activities';
@@ -33,8 +33,10 @@
 			<td>Email</td>
 			<td>Status</td>
 		</thead>
-		<?php 
-			$stmt = $pdo->query('SELECT * FROM users JOIN status ON users.status_id = status.id ORDER BY username');
+		<?php
+			$statusID = 2;
+			$lettreUsername = 'e';
+			$stmt = $pdo->query("SELECT * FROM users JOIN status ON users.status_id = status.id WHERE username LIKE '$lettreUsername%' AND status.id = $statusID ORDER BY username");
 			while ($row = $stmt->fetch())
 			{
 			    //echo $row['email'] . "\n";

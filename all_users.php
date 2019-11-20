@@ -34,16 +34,24 @@
 
 	// traitement du formulaire de supression
 	if (isset($_GET['status_id']) && isset($_GET['user_id']) && isset($_GET['action']) && $_GET['action'] == "askDeletion") {
+		try {
+		 $pdo->beginTransaction();
+			 // Ajout au log
+	 		$datetime = date("Y-m-d H:i:s");
+	 		$stmt = $pdo->prepare("INSERT INTO action_log (action_date, action_name, user_id) values (?, ?, ?)");
+	 		$stmt->execute([ $datetime, $_GET['action'], $_GET['user_id']]);
 
-		// Ajout au log
-		$datetime = date("Y-m-d H:i:s");
-		$stmt = $pdo->prepare("INSERT INTO action_log (action_date, action_name, user_id) values (?, ?, ?)");
-		$stmt->execute([ $datetime, $_GET['action'], $_GET['user_id']]);
+			//throw new \Exception("Error Processing Request", 1);
 
-		// modification du status
-		$stmt = $pdo->prepare("UPDATE users SET status_id = ? WHERE id = ?");
-		$stmt->execute([ 3, $_GET['user_id']]);
+			// modification du status
+			$stmt = $pdo->prepare("UPDATE users SET status_id = ? WHERE id = ?");
+			$stmt->execute([ 3, $_GET['user_id']]);
 
+			$pdo->commit();
+		}catch (Exception $e){
+			$pdo->rollBack();
+		 	throw $e;
+		}
 	}
  ?>
 

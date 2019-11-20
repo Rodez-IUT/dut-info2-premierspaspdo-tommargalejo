@@ -17,7 +17,7 @@
 	     throw new PDOException($e->getMessage(), (int)$e->getCode());
 	}
 
-	// traitement du formulaire
+	// traitement du formulaire re recherche
 	$statusID = 2;
 	$lettreUsername = '';
 
@@ -30,6 +30,20 @@
 		} else if ($_GET['status'] == "waitingDelete") {
 			$statusID = 3;
 		}
+	}
+
+	// traitement du formulaire de supression
+	if (isset($_GET['status_id']) && isset($_GET['user_id']) && isset($_GET['action']) && $_GET['action'] == "askDeletion") {
+
+		// Ajout au log
+		$datetime = date("Y-m-d H:i:s");
+		$stmt = $pdo->prepare("INSERT INTO action_log (action_date, action_name, user_id) values (?, ?, ?)");
+		$stmt->execute([ $datetime, $_GET['action'], $_GET['user_id']]);
+
+		// modification du status
+		$stmt = $pdo->prepare("UPDATE users SET status_id = ? WHERE id = ?");
+		$stmt->execute([ 3, $_GET['user_id']]);
+
 	}
  ?>
 
@@ -78,7 +92,7 @@
 			    	echo '<td>' . $row['username'] . '</td>';
 			    	echo '<td>' . $row['email'] . '</td>';
 			    	echo '<td>' . $row['name'] . '</td>';
-						if ($row['idStatus'] == 3) {
+						if ($row['idStatus'] == 1) {
 							echo '<td><a href="all_users.php?status_id=3&user_id='. $row['id'] .'&action=askDeletion">Supprimer</a></td>';
 						}
 			    echo '</tr>';

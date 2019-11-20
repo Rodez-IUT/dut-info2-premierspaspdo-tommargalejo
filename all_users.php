@@ -25,8 +25,10 @@
 		$lettreUsername = htmlspecialchars($_POST['lettre']);
 		if ($_POST['status'] == "active") {
 			$statusID = 2;
-		} else {
+		} else if ($_POST['status'] == "waiting") {
 			$statusID = 1;
+		} else if ($_POST['status'] == "waitingDelete") {
+			$statusID = 3;
 		}
 	}
  ?>
@@ -49,6 +51,10 @@
 			<option value="waiting"
 					<?php if (isset($_POST['status']) && $_POST['status'] == "waiting"){echo 'selected';}?>
 			>Waiting for account validation</option>
+
+			<option value="waitingDelete"
+					<?php if (isset($_POST['status']) && $_POST['status'] == "waitingDelete"){echo 'selected';}?>
+			>Waiting for account deletion</option>
 		</select>
 		<input type="submit" name="valider" value="ok">
 	</form><br>
@@ -73,5 +79,6 @@
 			}
 		?>
 	 </table>
+
 </body>
 </html>

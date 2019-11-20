@@ -21,13 +21,13 @@
 	$statusID = 2;
 	$lettreUsername = '';
 
-	if (isset($_POST['lettre']) && isset($_POST['status'])) {
-		$lettreUsername = htmlspecialchars($_POST['lettre']);
-		if ($_POST['status'] == "active") {
+	if (isset($_GET['lettre']) && isset($_GET['status'])) {
+		$lettreUsername = htmlspecialchars($_GET['lettre']);
+		if ($_GET['status'] == "active") {
 			$statusID = 2;
-		} else if ($_POST['status'] == "waiting") {
+		} else if ($_GET['status'] == "waiting") {
 			$statusID = 1;
-		} else if ($_POST['status'] == "waitingDelete") {
+		} else if ($_GET['status'] == "waitingDelete") {
 			$statusID = 3;
 		}
 	}
@@ -40,24 +40,27 @@
 </head>
 <body>
 	<h1>Tous les utilisateurs</h1>
-	<form action="all_users.php" method="post">
+	<!-- Formulaire de recherche -->
+	<form action="all_users.php" method="GET">
 		<label for="letter">Start with letter: </label>
 		<input type="text" name="lettre" value="<?php echo $lettreUsername; ?>">
 		<label for="status"> and status : </label>
 		<select name="status">
 			<option value="active"
-				<?php if (isset($_POST['status']) && $_POST['status'] == "active"){echo 'selected';}?>
+				<?php if (isset($_GET['status']) && $_GET['status'] == "active"){echo 'selected';}?>
 				>Active account</option>
 			<option value="waiting"
-					<?php if (isset($_POST['status']) && $_POST['status'] == "waiting"){echo 'selected';}?>
+					<?php if (isset($_GET['status']) && $_GET['status'] == "waiting"){echo 'selected';}?>
 			>Waiting for account validation</option>
 
 			<option value="waitingDelete"
-					<?php if (isset($_POST['status']) && $_POST['status'] == "waitingDelete"){echo 'selected';}?>
+					<?php if (isset($_GET['status']) && $_GET['status'] == "waitingDelete"){echo 'selected';}?>
 			>Waiting for account deletion</option>
 		</select>
 		<input type="submit" name="valider" value="ok">
 	</form><br>
+
+	<!-- Affichage du résultat de la requête -->
 	<table>
 		<thead>
 			<td>Id</td>
@@ -66,7 +69,7 @@
 			<td>Status</td>
 		</thead>
 		<?php
-			$stmt = $pdo->prepare("SELECT users.id, username, email, name FROM users JOIN status ON users.status_id = status.id WHERE username LIKE ? AND status.id = ? ORDER BY username");
+			$stmt = $pdo->prepare("SELECT users.id, username, email, name, status.id as idStatus FROM users JOIN status ON users.status_id = status.id WHERE username LIKE ? AND status.id = ? ORDER BY username");
 			$stmt->execute([$lettreUsername . '%', $statusID]);
 			while ($row = $stmt->fetch())
 			{
@@ -75,6 +78,9 @@
 			    	echo '<td>' . $row['username'] . '</td>';
 			    	echo '<td>' . $row['email'] . '</td>';
 			    	echo '<td>' . $row['name'] . '</td>';
+						if ($row['idStatus'] == 3) {
+							echo '<td><a href="all_users.php?status_id=3&user_id='. $row['id'] .'&action=askDeletion">Supprimer</a></td>';
+						}
 			    echo '</tr>';
 			}
 		?>

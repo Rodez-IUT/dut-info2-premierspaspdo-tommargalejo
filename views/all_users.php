@@ -61,6 +61,13 @@
 	<title>All Users</title>
 </head>
 <body>
+    <?php
+    spl_autoload_extensions(".php");
+    spl_autoload_register();
+
+    use yasmf\HttpHelper;
+    ?>
+
 	<h1>Tous les utilisateurs</h1>
 	<!-- Formulaire de recherche -->
 	<form action="all_users.php" method="GET">
